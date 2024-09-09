@@ -40,7 +40,7 @@ jobs:
     # 5. 提交更改并推送到 GitHub
     - name: Commit changes
       run: |
-        cd ${{ github.workspace }}
+        echo ${{ github.workspace }}
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git add .
