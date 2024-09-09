@@ -12,9 +12,7 @@ jobs:
     steps:
     # 1. 检出 GitHub 仓库代码
     - name: Checkout repository
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0  # 确保完整检出，包括 .git 文件夹
+      uses: actions/checkout@v3
 
     # 2. 安装 rclone
     - name: Install rclone
@@ -37,7 +35,7 @@ jobs:
     # 4. 使用 rclone 同步 WebDAV 文件到本地工作目录
     - name: Sync WebDAV content to local
       run: |
-        rclone sync webdav:/ ${{ github.workspace }}/ --verbose --exclude ".git/**" --exclude ".github/**"
+        rclone sync webdav:/ ${{ github.workspace }}/${{ secrets.TARGET_DIR_IN_REPO }} --verbose --exclude ".git/**" --exclude ".github/**"
 
     # 5. 提交更改并推送到 GitHub
     - name: Commit changes
@@ -48,4 +46,5 @@ jobs:
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git add .
         git commit -m "Sync WebDAV content"
+    # 6. 请开启/settings/actions里的Read and write permissions，否则无法推送
         git push origin main
