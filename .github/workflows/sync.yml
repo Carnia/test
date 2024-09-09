@@ -1,12 +1,9 @@
 name: WebDAV Sync
 
-# 设定工作流的触发条件，可以是定时执行或手动触发
 on:
-  # 每天的 00:00 触发
   schedule:
-    - cron: '0 0 * * *'
-  # 手动触发
-  workflow_dispatch:
+    - cron: '0 0 * * *'  # 每天00:00执行
+  workflow_dispatch:      # 允许手动触发
 
 jobs:
   sync_webdav:
@@ -22,12 +19,12 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y rclone
-        echo rclone obscure ${{ secrets.WEBDAV_PASSWORD }}
 
-    # 3. 配置 rclone WebDAV 远程连接
+    # 3. 使用 rclone obscure 加密 WebDAV 密码并配置 rclone
     - name: Configure rclone
       run: |
         mkdir -p ~/.config/rclone
+        # 生成rclone配置文件并将密码模糊化
         echo "[webdav]" > ~/.config/rclone/rclone.conf
         echo "type = webdav" >> ~/.config/rclone/rclone.conf
         echo "url = ${{ secrets.WEBDAV_URL }}" >> ~/.config/rclone/rclone.conf
@@ -38,12 +35,12 @@ jobs:
     # 4. 使用 rclone 同步 WebDAV 文件到本地工作目录
     - name: Sync WebDAV content to local
       run: |
-        rclone sync webdav:/ /home/runner/work/test/test/ --verbose
+        rclone sync webdav:/ ${{ github.workspace }}/ --verbose
 
     # 5. 提交更改并推送到 GitHub
     - name: Commit changes
       run: |
-        cd /home/runner/work/test/test/
+        cd ${{ github.workspace }}
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git add .
