@@ -1,0 +1,50 @@
+name: WebDAV Sync
+
+# 设定工作流的触发条件，可以是定时执行或手动触发
+on:
+  # 每天的 00:00 触发
+  schedule:
+    - cron: '0 0 * * *'
+  # 手动触发
+  workflow_dispatch:
+
+jobs:
+  sync_webdav:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # 1. 检出 GitHub 仓库代码
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # 2. 安装 rclone
+    - name: Install rclone
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y rclone
+
+    # 3. 配置 rclone WebDAV 远程连接
+    - name: Configure rclone
+      run: |
+        mkdir -p ~/.config/rclone
+        echo "[webdav]" > ~/.config/rclone/rclone.conf
+        echo "type = webdav" >> ~/.config/rclone/rclone.conf
+        echo "url = ${{ secrets.WEBDAV_URL }}" >> ~/.config/rclone/rclone.conf
+        echo "vendor = other" >> ~/.config/rclone/rclone.conf
+        echo "user = ${{ secrets.WEBDAV_USER }}" >> ~/.config/rclone/rclone.conf
+        echo "pass = ${{ secrets.WEBDAV_PASSWORD }}" >> ~/.config/rclone/rclone.conf
+
+    # 4. 使用 rclone 同步 WebDAV 文件到本地工作目录
+    - name: Sync WebDAV content to local
+      run: |
+        rclone sync webdav:/ /home/runner/work/test/test/ --verbose
+
+    # 5. 提交更改并推送到 GitHub
+    - name: Commit changes
+      run: |
+        cd /home/runner/work/test/test/
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add .
+        git commit -m "Sync WebDAV content"
+        git push origin main
