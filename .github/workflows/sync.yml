@@ -13,6 +13,8 @@ jobs:
     # 1. 检出 GitHub 仓库代码
     - name: Checkout repository
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # 确保完整检出，包括 .git 文件夹
 
     # 2. 安装 rclone
     - name: Install rclone
