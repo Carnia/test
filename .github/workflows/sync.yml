@@ -32,7 +32,7 @@ jobs:
         echo "url = ${{ secrets.WEBDAV_URL }}" >> ~/.config/rclone/rclone.conf
         echo "vendor = other" >> ~/.config/rclone/rclone.conf
         echo "user = ${{ secrets.WEBDAV_USER }}" >> ~/.config/rclone/rclone.conf
-        echo "pass = ${{ secrets.WEBDAV_PASSWORD }}" >> ~/.config/rclone/rclone.conf
+        echo "webdav_pass = ${{ secrets.WEBDAV_PASSWORD }}" >> ~/.config/rclone/rclone.conf
 
     # 4. 使用 rclone 同步 WebDAV 文件到本地工作目录
     - name: Sync WebDAV content to local
