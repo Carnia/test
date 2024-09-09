@@ -35,7 +35,7 @@ jobs:
     # 4. 使用 rclone 同步 WebDAV 文件到本地工作目录
     - name: Sync WebDAV content to local
       run: |
-        rclone sync webdav:/ ${{ github.workspace }}/${{ secrets.TARGET_DIR_IN_REPO }} --verbose --exclude ".git/**" --exclude ".github/**"
+        rclone sync webdav:/ ${{ github.workspace }} --verbose --exclude ".git/**" --exclude ".github/**"
 
     # 5. 提交更改并推送到 GitHub
     - name: Commit changes
