@@ -22,6 +22,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y rclone
+        echo rclone obscure ${{ secrets.WEBDAV_PASSWORD }}
 
     # 3. 配置 rclone WebDAV 远程连接
     - name: Configure rclone
@@ -32,7 +33,7 @@ jobs:
         echo "url = ${{ secrets.WEBDAV_URL }}" >> ~/.config/rclone/rclone.conf
         echo "vendor = other" >> ~/.config/rclone/rclone.conf
         echo "user = ${{ secrets.WEBDAV_USER }}" >> ~/.config/rclone/rclone.conf
-        echo "webdav_pass = ${{ secrets.WEBDAV_PASSWORD }}" >> ~/.config/rclone/rclone.conf
+        echo "pass = $(rclone obscure ${{ secrets.WEBDAV_PASSWORD }})" >> ~/.config/rclone/rclone.conf
 
     # 4. 使用 rclone 同步 WebDAV 文件到本地工作目录
     - name: Sync WebDAV content to local
